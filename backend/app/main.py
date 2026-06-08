@@ -5,6 +5,20 @@ from dotenv import load_dotenv
 from app.core.config import settings
 from app.core.database import engine
 import os
+# Import all models so SQLAlchemy knows about them
+from app.models import (
+    User,
+    InfluencerProfile,
+    Campaign,
+    CampaignApplication,
+    Deliverable,
+    Payment,
+    Subscription
+)
+from app.core.database import engine, Base
+
+# Create tables
+Base.metadata.create_all(bind=engine)
 
 load_dotenv()
 
