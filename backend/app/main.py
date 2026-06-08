@@ -1,28 +1,38 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
+from app.core.config import settings
+from app.core.database import engine
 import os
 
 load_dotenv()
 
 app = FastAPI(
-    title="Influencer Marketing Platform",
+    title=settings.APP_NAME,
     description="API for connecting brands and influencers",
     version="1.0.0"
 )
 
-# CORS - allows frontend to talk to backend
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React frontend URL
+    allow_origins=[settings.FRONTEND_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Serve uploaded files
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 @app.get("/")
 def root():
-    return {"message": "Influencer Marketing Platform API is running"}
+    return {
+        "message": f"{settings.APP_NAME} API is running",
+        "docs": "/docs"
+    }
 
 @app.get("/health")
 def health_check():
