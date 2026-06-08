@@ -17,8 +17,7 @@ from app.models import (
 )
 from app.core.database import engine, Base
 
-# Create tables
-Base.metadata.create_all(bind=engine)
+
 
 load_dotenv()
 
