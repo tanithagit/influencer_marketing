@@ -19,10 +19,15 @@ class UserResponse(BaseModel):
     full_name:   str
     role:        UserRole
     is_verified: bool
+    is_active:   bool
     created_at:  datetime
 
     class Config:
         from_attributes = True
+
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    email:     Optional[EmailStr] = None
 
 class Token(BaseModel):
     access_token: str
@@ -30,5 +35,5 @@ class Token(BaseModel):
     user:         UserResponse
 
 class TokenData(BaseModel):
-    user_id:  Optional[int] = None
-    role:     Optional[str] = None
+    user_id: Optional[int] = None
+    role:    Optional[str] = None

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from app.core.config import settings
-from app.api.routes import auth
+from app.api.routes import auth, users
 import os
 
 load_dotenv()
@@ -23,12 +23,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Static files for uploads
+# Static files
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Routes
 app.include_router(auth.router)
+app.include_router(users.router)
 
 @app.get("/")
 def root():
