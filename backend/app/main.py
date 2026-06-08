@@ -3,21 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from app.core.config import settings
-from app.core.database import engine
+from app.api.routes import auth
 import os
-# Import all models so SQLAlchemy knows about them
-from app.models import (
-    User,
-    InfluencerProfile,
-    Campaign,
-    CampaignApplication,
-    Deliverable,
-    Payment,
-    Subscription
-)
-from app.core.database import engine, Base
-
-
 
 load_dotenv()
 
@@ -36,9 +23,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve uploaded files
+# Static files for uploads
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+# Routes
+app.include_router(auth.router)
 
 @app.get("/")
 def root():
