@@ -20,6 +20,12 @@ import MyApplications      from './pages/influencer/MyApplications'
 import MyDeliverables      from './pages/influencer/MyDeliverables'
 import MyEarnings          from './pages/influencer/MyEarnings'
 
+// Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminUsers     from './pages/admin/AdminUsers'
+import AdminCampaigns from './pages/admin/AdminCampaigns'
+import AdminPayments  from './pages/admin/AdminPayments'
+
 function App() {
   const { user, loading } = useAuth()
 
@@ -83,6 +89,28 @@ function App() {
       <Route path="/influencer/earnings" element={
         <ProtectedRoute allowedRoles={['influencer']}>
           <MyEarnings />
+        </ProtectedRoute>
+      } />
+
+      {/* Admin Routes */}
+      <Route path="/admin/dashboard" element={
+        <ProtectedRoute allowedRoles={['admin']}>
+          <AdminDashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/users" element={
+        <ProtectedRoute allowedRoles={['admin']}>
+          <AdminUsers />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/campaigns" element={
+        <ProtectedRoute allowedRoles={['admin']}>
+          <AdminCampaigns />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/payments" element={
+        <ProtectedRoute allowedRoles={['admin']}>
+          <AdminPayments />
         </ProtectedRoute>
       } />
 
