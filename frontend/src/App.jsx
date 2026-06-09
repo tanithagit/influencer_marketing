@@ -8,10 +8,17 @@ import Login    from './pages/auth/Login'
 import Register from './pages/auth/Register'
 
 // Brand Pages
-import BrandDashboard   from './pages/brand/BrandDashboard'
-import BrandCampaigns   from './pages/brand/BrandCampaigns'
-import CreateCampaign   from './pages/brand/CreateCampaign'
+import BrandDashboard    from './pages/brand/BrandDashboard'
+import BrandCampaigns    from './pages/brand/BrandCampaigns'
+import CreateCampaign    from './pages/brand/CreateCampaign'
 import BrandApplications from './pages/brand/BrandApplications'
+
+// Influencer Pages
+import InfluencerDashboard from './pages/influencer/InfluencerDashboard'
+import BrowseCampaigns     from './pages/influencer/BrowseCampaigns'
+import MyApplications      from './pages/influencer/MyApplications'
+import MyDeliverables      from './pages/influencer/MyDeliverables'
+import MyEarnings          from './pages/influencer/MyEarnings'
 
 function App() {
   const { user, loading } = useAuth()
@@ -49,6 +56,33 @@ function App() {
       <Route path="/brand/applications" element={
         <ProtectedRoute allowedRoles={['brand']}>
           <BrandApplications />
+        </ProtectedRoute>
+      } />
+
+      {/* Influencer Routes */}
+      <Route path="/influencer/dashboard" element={
+        <ProtectedRoute allowedRoles={['influencer']}>
+          <InfluencerDashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/influencer/campaigns" element={
+        <ProtectedRoute allowedRoles={['influencer']}>
+          <BrowseCampaigns />
+        </ProtectedRoute>
+      } />
+      <Route path="/influencer/applications" element={
+        <ProtectedRoute allowedRoles={['influencer']}>
+          <MyApplications />
+        </ProtectedRoute>
+      } />
+      <Route path="/influencer/deliverables" element={
+        <ProtectedRoute allowedRoles={['influencer']}>
+          <MyDeliverables />
+        </ProtectedRoute>
+      } />
+      <Route path="/influencer/earnings" element={
+        <ProtectedRoute allowedRoles={['influencer']}>
+          <MyEarnings />
         </ProtectedRoute>
       } />
 
