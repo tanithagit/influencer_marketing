@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from app.core.config import settings
-from app.api.routes import auth, users, campaigns, applications, deliverables, payments
+from app.api.routes import auth, users, campaigns, applications, deliverables, payments, analytics
 import os
 
 load_dotenv()
@@ -32,6 +32,7 @@ app.include_router(campaigns.router)
 app.include_router(applications.router)
 app.include_router(deliverables.router)
 app.include_router(payments.router)
+app.include_router(analytics.router)
 
 @app.get("/")
 def root():
