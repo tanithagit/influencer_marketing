@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List
 from app.core.database import get_db
@@ -21,11 +21,10 @@ from app.services.application_service import (
     get_application_by_id,
     review_application
 )
+from app.services.email_service import send_application_status_email
 
 router = APIRouter(prefix="/api/applications", tags=["Applications"])
 
-
-# ─── Influencer Routes ────────────────────────────────────────
 
 @router.post(
     "/campaign/{campaign_id}",
@@ -49,8 +48,6 @@ def get_my_applications(
     return get_influencer_applications(db, current_user.id)
 
 
-# ─── Brand Routes ─────────────────────────────────────────────
-
 @router.get(
     "/campaign/{campaign_id}",
     response_model=List[ApplicationResponse]
@@ -66,32 +63,65 @@ def list_campaign_applications(
 @router.put("/{application_id}/approve", response_model=ApplicationResponse)
 def approve_application(
     application_id: int,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_brand),
     db: Session = Depends(get_db)
 ):
-    return review_application(
+    application = review_application(
         db,
         application_id,
         ApplicationStatus.approved,
         current_user
     )
+    # Send email notification
+    influencer = db.query(User).filter(
+        User.id == application.influencer_id
+    ).first()
+    campaign = db.query(
+        __import__('app.models.campaign', fromlist=['Campaign']).Campaign
+    ).filter_by(id=application.campaign_id).first()
+
+    if influencer and campaign:
+        background_tasks.add_task(
+            send_application_status_email,
+            influencer.email,
+            influencer.full_name,
+            campaign.title,
+            "approved"
+        )
+    return application
 
 
 @router.put("/{application_id}/reject", response_model=ApplicationResponse)
 def reject_application(
     application_id: int,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_brand),
     db: Session = Depends(get_db)
 ):
-    return review_application(
+    application = review_application(
         db,
         application_id,
         ApplicationStatus.rejected,
         current_user
     )
+    influencer = db.query(User).filter(
+        User.id == application.influencer_id
+    ).first()
+    campaign = db.query(
+        __import__('app.models.campaign', fromlist=['Campaign']).Campaign
+    ).filter_by(id=application.campaign_id).first()
 
+    if influencer and campaign:
+        background_tasks.add_task(
+            send_application_status_email,
+            influencer.email,
+            influencer.full_name,
+            campaign.title,
+            "rejected"
+        )
+    return application
 
-# ─── Shared Route ─────────────────────────────────────────────
 
 @router.get("/{application_id}", response_model=ApplicationResponse)
 def get_application(
